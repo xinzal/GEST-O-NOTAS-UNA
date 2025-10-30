@@ -14,30 +14,111 @@
 }
 
 *{box-sizing:border-box}
-body{font-family:Arial,Helvetica,sans-serif;background-color:var(--bg);margin:0;color:var(--text)}
-header{background-color:var(--primary);color:#fff;padding:20px;text-align:center;font-size:24px;font-weight:700;border-bottom:4px solid rgba(0,0,0,0.03)}
-nav{display:flex;justify-content:center;margin:20px 0;gap:12px;flex-wrap:wrap;padding:0 12px}
-nav button{padding:10px 18px;font-size:15px;border:0;border-radius:8px;cursor:pointer;background-color:var(--accent);color:#fff;transition:transform .12s ease}
-nav button.active,nav button:hover{background-color:var(--primary);transform:translateY(-1px)}
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background-color:var(--bg);
+  margin:0;
+  color:var(--text);
+  overflow-x:hidden;
+}
 
-section{display:none;max-width:1200px;margin:12px auto;padding:18px;background:var(--card);border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06);overflow:auto}
+/* Fundo animado */
+#bgCanvas{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:-1;
+}
+
+/* Cabeçalho e navegação */
+header{
+  background-color:var(--primary);
+  color:#fff;
+  padding:20px;
+  text-align:center;
+  font-size:24px;
+  font-weight:700;
+  border-bottom:4px solid rgba(0,0,0,0.03);
+}
+nav{
+  display:flex;
+  justify-content:center;
+  margin:20px 0;
+  gap:12px;
+  flex-wrap:wrap;
+  padding:0 12px;
+}
+nav button{
+  padding:10px 18px;
+  font-size:15px;
+  border:0;
+  border-radius:8px;
+  cursor:pointer;
+  background-color:var(--accent);
+  color:#fff;
+  transition:transform .12s ease;
+}
+nav button.active,
+nav button:hover{
+  background-color:var(--primary);
+  transform:translateY(-1px);
+}
+
+section{
+  display:none;
+  max-width:1200px;
+  margin:12px auto;
+  padding:18px;
+  background:var(--card);
+  border-radius:10px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.06);
+  overflow:auto;
+}
 section.active{display:block}
 
+/* Tabela */
 table{width:100%;border-collapse:collapse;margin-top:18px;font-size:14px;min-width:900px}
 th,td{border:1px solid #e6dff1;padding:10px;text-align:center;vertical-align:middle}
 th{background:var(--primary);color:#fff;font-weight:600}
 tr:nth-child(even){background:#fbf6fd}
 tr:hover{background:#f0e0fb}
 
-.obs-bubble{display:none;position:absolute;background:#fff;border:1px solid #ddd;padding:10px;border-radius:8px;width:260px;box-shadow:0 10px 28px rgba(0,0,0,0.12);z-index:1200;animation:fadeIn .18s ease}
+/* Observação */
+.obs-bubble{
+  display:none;
+  position:fixed; /* evita aumentar a tela */
+  background:#fff;
+  border:1px solid #ddd;
+  padding:10px;
+  border-radius:8px;
+  width:260px;
+  box-shadow:0 10px 28px rgba(0,0,0,0.12);
+  z-index:1200;
+  animation:fadeIn .18s ease;
+}
 @keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 .obs-bubble textarea{width:100%;height:80px;margin-bottom:8px}
 .obs-button-wrapper{position:relative;display:inline-block}
 .obs-indicator{position:absolute;top:-4px;right:-6px;width:10px;height:10px;background:purple;border-radius:50%;display:none}
 .obs-button-wrapper.has-text .obs-indicator{display:block}
 
-#feedback{position:fixed;top:18px;right:18px;background:var(--primary);color:#fff;padding:10px 14px;border-radius:8px;display:none;box-shadow:0 10px 28px rgba(0,0,0,0.14);z-index:1300}
+/* Feedback */
+#feedback{
+  position:fixed;
+  top:18px;
+  right:18px;
+  background:var(--primary);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:8px;
+  display:none;
+  box-shadow:0 10px 28px rgba(0,0,0,0.14);
+  z-index:1300;
+}
 
+/* Paginação */
 #paginationBar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap}
 .page-controls{display:flex;align-items:center;gap:8px}
 .page-controls button{padding:6px 10px;border-radius:6px;border:0;background:var(--primary);color:#fff;cursor:pointer}
@@ -51,157 +132,192 @@ tr:hover{background:#f0e0fb}
 </head>
 <body>
 
+<canvas id="bgCanvas"></canvas>
+
 <header>Gestão de Notas Fiscais UNA</header>
 
 <nav>
-    <button id="btnView" class="active">Visualizar NFs</button>
+  <button id="btnView" class="active">Visualizar NFs</button>
 </nav>
 
-<!-- Visualizar NFs -->
 <section id="viewSection" class="active">
-    <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-        <div style="flex:2; min-width:220px;">
-            <label for="searchInput">Pesquisar:</label>
-            <input type="text" id="searchInput" placeholder="Pesquise razão, NF..." oninput="aplicarFiltroPesquisa()">
-        </div>
-
-        <div style="min-width:220px;">
-            <label>&nbsp;</label>
-            <button onclick="carregarNFs()">Atualizar</button>
-        </div>
+  <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+    <div style="flex:2; min-width:220px;">
+      <label for="searchInput">Pesquisar:</label>
+      <input type="text" id="searchInput" placeholder="Pesquise razão, NF..." oninput="aplicarFiltroPesquisa()">
     </div>
-
-    <table id="nfTable" aria-live="polite">
-        <thead>
-            <tr>
-                <th>Data/Hora</th>
-                <th>Razão Social</th>
-                <th>Nº NF Venda</th>
-                <th>Nº NF Remessa</th>
-                <th>Nº NF Cobertura</th>
-                <th>Fábrica</th>
-                <th>PDF</th>
-                <th>Observação</th>
-            </tr>
-        </thead>
-        <tbody><tr><td colspan="8" style="text-align:center;">Carregando...</td></tr></tbody>
-    </table>
-
-    <div id="paginationBar">
-        <div class="page-controls">
-            <button id="firstPageBtn" onclick="goToPage(1)">⟪ Primeiro</button>
-            <button id="prevBtn" onclick="changePage(-1)">⟨ Voltar</button>
-        </div>
-
-        <div class="page-numbers" id="pageNumbers"></div>
-
-        <div class="page-controls">
-            <button id="nextBtn" onclick="changePage(1)">Avançar ⟩</button>
-            <button id="lastPageBtn" onclick="goToLastPage()">Último ⟫</button>
-        </div>
-
-        <div style="display:flex; gap:8px; align-items:center;">
-            <div>
-                Mostrar
-                <select id="rowsPerPage" onchange="changeRowsPerPage()">
-                    <option value="10">10</option>
-                    <option value="30">30</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                </select>
-                por página
-            </div>
-            <div id="showingInfo" style="white-space:nowrap; font-size:13px; color:#333;"></div>
-        </div>
+    <div style="min-width:220px;">
+      <label>&nbsp;</label>
+      <button onclick="carregarNFs()">Atualizar</button>
     </div>
+  </div>
+
+  <table id="nfTable" aria-live="polite">
+    <thead>
+      <tr>
+        <th>Data/Hora</th>
+        <th>Razão Social</th>
+        <th>Nº NF Venda</th>
+        <th>Nº NF Remessa</th>
+        <th>Nº NF Cobertura</th>
+        <th>Fábrica</th>
+        <th>PDF</th>
+        <th>Observação</th>
+      </tr>
+    </thead>
+    <tbody><tr><td colspan="8" style="text-align:center;">Carregando...</td></tr></tbody>
+  </table>
+
+  <div id="paginationBar">
+    <div class="page-controls">
+      <button id="firstPageBtn" onclick="goToPage(1)">⟪ Primeiro</button>
+      <button id="prevBtn" onclick="changePage(-1)">⟨ Voltar</button>
+    </div>
+    <div class="page-numbers" id="pageNumbers"></div>
+    <div class="page-controls">
+      <button id="nextBtn" onclick="changePage(1)">Avançar ⟩</button>
+      <button id="lastPageBtn" onclick="goToLastPage()">Último ⟫</button>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <div>
+        Mostrar
+        <select id="rowsPerPage" onchange="changeRowsPerPage()">
+          <option value="10">10</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+        por página
+      </div>
+      <div id="showingInfo" style="white-space:nowrap; font-size:13px; color:#333;"></div>
+    </div>
+  </div>
 </section>
 
-<!-- Obs bubble -->
 <div id="obsBubble" class="obs-bubble" role="dialog" aria-modal="true">
-    <textarea id="obsText" placeholder="Escreva a observação..."></textarea>
-    <div style="text-align:right;">
-        <button onclick="salvarObs()">Salvar</button>
-        <button onclick="fecharObs()">Fechar</button>
-    </div>
+  <textarea id="obsText" placeholder="Escreva a observação..."></textarea>
+  <div style="text-align:right;">
+    <button onclick="salvarObs()">Salvar</button>
+    <button onclick="fecharObs()">Fechar</button>
+  </div>
 </div>
 
-<!-- Feedback -->
 <div id="feedback">Operação realizada com sucesso!</div>
 
 <script>
-const webAppURL = "https://script.google.com/macros/s/AKfycbyPdj_FtFywyV4Ey4b3-Q6YV3RcgXzsEUux6ceK23cdJTh71paHQ9HMD5Ts-pFOomUX/exec";
-let allData = [], workingData = [];
-let currentPage = 1;
-let rowsPerPage = 10;
-let obsId = null;
+/* Fundo animado com partículas (mesmo do outro código) */
+const canvas=document.getElementById('bgCanvas');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
 
-const refs = {
-  nfTableBody: document.querySelector('#nfTable tbody'),
-  pageNumbers: document.getElementById('pageNumbers'),
-  prevBtn: document.getElementById('prevBtn'),
-  nextBtn: document.getElementById('nextBtn'),
-  firstPageBtn: document.getElementById('firstPageBtn'),
-  lastPageBtn: document.getElementById('lastPageBtn'),
-  showingInfo: document.getElementById('showingInfo'),
-  feedback: document.getElementById('feedback'),
-  obsBubble: document.getElementById('obsBubble'),
-  obsText: document.getElementById('obsText'),
-  searchInput: document.getElementById('searchInput')
+class Particle{
+  constructor(){
+    this.x=Math.random()*canvas.width;
+    this.y=Math.random()*canvas.height;
+    this.radius=Math.random()*2+1;
+    this.dx=(Math.random()-0.5)*1;
+    this.dy=(Math.random()-0.5)*1;
+    this.color=`rgba(41,182,246,${Math.random()*0.4+0.1})`;
+  }
+  draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);ctx.fillStyle=this.color;ctx.fill();}
+  update(particles){
+    this.x+=this.dx;this.y+=this.dy;
+    if(this.x<0||this.x>canvas.width)this.dx*=-1;
+    if(this.y<0||this.y>canvas.height)this.dy*=-1;
+    particles.forEach(p=>{
+      const dist=Math.hypot(this.x-p.x,this.y-p.y);
+      if(dist<100){
+        ctx.beginPath();
+        ctx.strokeStyle=`rgba(33,150,243,${0.15-dist/800})`;
+        ctx.moveTo(this.x,this.y);
+        ctx.lineTo(p.x,p.y);
+        ctx.stroke();
+      }
+    });
+    this.draw();
+  }
+}
+
+const particles=[];
+for(let i=0;i<100;i++)particles.push(new Particle());
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>p.update(particles));
+  requestAnimationFrame(animate);
+}
+animate();
+window.addEventListener('resize',()=>{
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+});
+
+/* === Funções originais === */
+const webAppURL="https://script.google.com/macros/s/AKfycbyPdj_FtFywyV4Ey4b3-Q6YV3RcgXzsEUux6ceK23cdJTh71paHQ9HMD5Ts-pFOomUX/exec";
+let allData=[],workingData=[];
+let currentPage=1,rowsPerPage=10,obsId=null;
+
+const refs={
+  nfTableBody:document.querySelector('#nfTable tbody'),
+  pageNumbers:document.getElementById('pageNumbers'),
+  prevBtn:document.getElementById('prevBtn'),
+  nextBtn:document.getElementById('nextBtn'),
+  firstPageBtn:document.getElementById('firstPageBtn'),
+  lastPageBtn:document.getElementById('lastPageBtn'),
+  showingInfo:document.getElementById('showingInfo'),
+  feedback:document.getElementById('feedback'),
+  obsBubble:document.getElementById('obsBubble'),
+  obsText:document.getElementById('obsText'),
+  searchInput:document.getElementById('searchInput')
 };
 
 async function carregarNFs(){
   try{
-    const res = await fetch(webAppURL + '?action=get');
-    allData = await res.json();
-    allData = allData.filter(x => x.fabrica === "UNA"); // apenas UNA
-    allData.sort((a,b)=> new Date(b.dataHora||0) - new Date(a.dataHora||0));
+    const res=await fetch(webAppURL+'?action=get');
+    allData=await res.json();
+    allData=allData.filter(x=>x.fabrica==="UNA");
+    allData.sort((a,b)=>new Date(b.dataHora||0)-new Date(a.dataHora||0));
     aplicarFiltroPesquisa();
-  }catch(err){
-    console.error(err);
-    allData = [];
-    aplicarFiltroPesquisa();
-  }
+  }catch(err){console.error(err);allData=[];aplicarFiltroPesquisa();}
 }
 
 function aplicarFiltroPesquisa(){
-  const termo = (refs.searchInput.value || '').toLowerCase().trim();
-  workingData = allData.filter(r=>{
-    const combined = (String(r.razao||'') + '|' + String(r.nfVenda||'') + '|' + String(r.nfRemessa||'')).toLowerCase();
+  const termo=(refs.searchInput.value||'').toLowerCase().trim();
+  workingData=allData.filter(r=>{
+    const combined=(String(r.razao||'')+'|'+String(r.nfVenda||'')+'|'+String(r.nfRemessa||'')).toLowerCase();
     return combined.includes(termo);
   });
-  currentPage = 1;
-  renderTabela();
+  currentPage=1;renderTabela();
 }
 
 function renderTabela(){
-  const tbody = refs.nfTableBody;
-  rowsPerPage = parseInt(document.getElementById('rowsPerPage').value,10)||10;
-  const totalItems = workingData.length;
-  const totalPages = Math.max(1, Math.ceil(totalItems/rowsPerPage));
-  if(currentPage > totalPages) currentPage = totalPages;
-  const start = (currentPage-1)*rowsPerPage;
-  const end = Math.min(totalItems, start+rowsPerPage);
-  const pageData = workingData.slice(start,end);
-  const frag = document.createDocumentFragment();
+  const tbody=refs.nfTableBody;
+  rowsPerPage=parseInt(document.getElementById('rowsPerPage').value,10)||10;
+  const totalItems=workingData.length;
+  const totalPages=Math.max(1,Math.ceil(totalItems/rowsPerPage));
+  if(currentPage>totalPages)currentPage=totalPages;
+  const start=(currentPage-1)*rowsPerPage;
+  const end=Math.min(totalItems,start+rowsPerPage);
+  const pageData=workingData.slice(start,end);
+  const frag=document.createDocumentFragment();
 
   if(pageData.length===0){
     const tr=document.createElement('tr');
     const td=document.createElement('td');
-    td.colSpan=8; td.style.textAlign='center';
-    td.textContent='Nenhuma NF encontrada.';
-    tr.appendChild(td); frag.appendChild(tr);
+    td.colSpan=8;td.style.textAlign='center';td.textContent='Nenhuma NF encontrada.';
+    tr.appendChild(td);frag.appendChild(tr);
   }else{
     for(const r of pageData){
-      const hasObs = String(r.observacao||'').trim()!=='';
+      const hasObs=String(r.observacao||'').trim()!=='';
       const tr=document.createElement('tr');
       const fields=['dataHora','razao','nfVenda','nfRemessa','nfCobertura','fabrica'];
       for(const f of fields){
         const td=document.createElement('td');
-        td.textContent = f==='dataHora' ? new Date(r[f]).toLocaleString() : (r[f]||'');
+        td.textContent=f==='dataHora'?new Date(r[f]).toLocaleString():(r[f]||'');
         tr.appendChild(td);
       }
       const tdPdf=document.createElement('td');
-      tdPdf.innerHTML = r.pdfLink ? `<a href="${r.pdfLink}" target="_blank">Abrir PDF</a>` : '—';
+      tdPdf.innerHTML=r.pdfLink?`<a href="${r.pdfLink}" target="_blank">Abrir PDF</a>`:'—';
       tr.appendChild(tdPdf);
 
       const tdObs=document.createElement('td');
@@ -213,13 +329,13 @@ function renderTabela(){
       btn.onclick=function(){abrirObs(r.id,this)};
       const span=document.createElement('span');
       span.className='obs-indicator';
-      wrap.appendChild(btn); wrap.appendChild(span);
+      wrap.appendChild(btn);wrap.appendChild(span);
       tdObs.appendChild(wrap);
       tr.appendChild(tdObs);
       frag.appendChild(tr);
     }
   }
-  tbody.innerHTML=''; tbody.appendChild(frag);
+  tbody.innerHTML='';tbody.appendChild(frag);
   updatePaginationUI(totalItems,totalPages,start+1,end);
 }
 
