@@ -1,139 +1,40 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Gestão de Notas Fiscais UNA</title>
 <style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #0a0a0f;
-    color: #dbe9ff;
-    margin: 0;
-    overflow-x: hidden;
-  }
-
-  header {
-    background: linear-gradient(90deg, #001f3f, #003c8f);
-    color: white;
-    text-align: center;
-    padding: 25px;
-    font-size: 1.8em;
-    font-weight: bold;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-  }
-
-  nav {
-    display: flex;
-    justify-content: center;
-    background: #101820;
-    padding: 15px;
-    gap: 10px;
-    border-bottom: 2px solid #0d47a1;
-  }
-
-  nav button {
-    background: #0277bd;
-    color: white;
-    border: none;
-    border-radius: 30px;
-    padding: 10px 25px;
-    font-size: 1em;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 10px rgba(2,119,189,0.4);
-  }
-
-  nav button:hover, nav button.active {
-    background: #039be5;
-    box-shadow: 0 0 20px rgba(3,155,229,0.8);
-    transform: scale(1.05);
-  }
-
-  section {
-    display: none;
-    max-width: 1000px;
-    margin: 40px auto;
-    background: #101820;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-  }
-
-  section.active {
-    display: block;
-  }
-
-  #searchInput {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #0d47a1;
-    margin-bottom: 15px;
-    background-color: #0f1722;
-    color: #dbe9ff;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    color: #dbe9ff;
-  }
-
-  th, td {
-    border: 1px solid #1e3a8a;
-    padding: 10px;
-    text-align: center;
-  }
-
-  th {
-    background: #0d47a1;
-    color: white;
-  }
-
-  tr:nth-child(even) {
-    background-color: #0f1722;
-  }
-
-  tr:nth-child(odd) {
-    background-color: #152238;
-  }
-
-  tr:hover {
-    background-color: #1e3a8a;
-  }
-
-  a {
-    color: #29b6f6;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  .pagination {
-    margin-top: 15px;
-    text-align: center;
-  }
-
-  .pagination button {
-    background: #0277bd;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    margin: 2px;
-    padding: 5px 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .pagination button.active,
-  .pagination button:hover {
-    background: #039be5;
-  }
+:root {
+  --primary: #003c8f;
+  --accent: #0277bd;
+  --bg: #f4f0f8;
+  --card: #fff;
+  --text: #333;
+}
+*{box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;background-color:var(--bg);margin:0;color:var(--text)}
+header{background-color:var(--primary);color:#fff;padding:20px;text-align:center;font-size:24px;font-weight:700}
+nav{display:flex;justify-content:center;margin:20px 0;gap:12px;flex-wrap:wrap}
+nav button{padding:10px 18px;font-size:15px;border:0;border-radius:8px;cursor:pointer;background-color:var(--accent);color:#fff;transition:transform .12s ease}
+nav button.active,nav button:hover{background-color:var(--primary);transform:translateY(-1px)}
+section{display:none;max-width:1200px;margin:12px auto;padding:18px;background:var(--card);border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+section.active{display:block}
+table{width:100%;border-collapse:collapse;margin-top:18px;font-size:14px;min-width:900px}
+th,td{border:1px solid #e6dff1;padding:10px;text-align:center;vertical-align:middle}
+th{background:var(--primary);color:#fff}
+tr:nth-child(even){background:#f9f9ff}
+tr:hover{background:#eef4ff}
+#paginationBar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap}
+.page-controls{display:flex;align-items:center;gap:8px}
+.page-controls button{padding:6px 10px;border-radius:6px;border:0;background:var(--primary);color:#fff;cursor:pointer}
+.page-controls button:disabled{background:#ddd;color:#666;cursor:not-allowed}
+.page-numbers{display:flex;gap:6px;align-items:center;flex-wrap:wrap;max-width:60%}
+.page-numbers button{padding:6px 10px;border-radius:6px;border:0;background:#eee;cursor:pointer}
+.page-numbers button.active{background:var(--primary);color:#fff;font-weight:600}
+#rowsPerPage{padding:6px;border-radius:6px}
+@media (max-width:900px){table{font-size:13px;min-width:720px}}
+#feedback{position:fixed;top:18px;right:18px;background:var(--primary);color:#fff;padding:10px 14px;border-radius:8px;display:none;box-shadow:0 10px 28px rgba(0,0,0,0.14)}
 </style>
 </head>
 <body>
@@ -145,9 +46,18 @@
 </nav>
 
 <section id="viewSection" class="active">
-  <input type="text" id="searchInput" placeholder="Pesquisar por NF ou Razão Social...">
-  
-  <table id="nfTable">
+  <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+    <div style="flex:2; min-width:220px;">
+      <label for="searchInput">Pesquisar:</label>
+      <input type="text" id="searchInput" placeholder="Pesquise razão, NF..." oninput="aplicarFiltroPesquisa()">
+    </div>
+    <div style="min-width:100px;">
+      <label>&nbsp;</label>
+      <button onclick="carregarNFs()">Atualizar</button>
+    </div>
+  </div>
+
+  <table id="nfTable" aria-live="polite">
     <thead>
       <tr>
         <th>Data/Hora</th>
@@ -160,86 +70,144 @@
         <th>Observação</th>
       </tr>
     </thead>
-    <tbody>
-      <tr><td colspan="8" style="text-align:center;">Carregando...</td></tr>
-    </tbody>
+    <tbody><tr><td colspan="8" style="text-align:center;">Carregando...</td></tr></tbody>
   </table>
 
-  <div class="pagination" id="pagination"></div>
+  <div id="paginationBar">
+    <div class="page-controls">
+      <button id="firstPageBtn" onclick="goToPage(1)">⟪ Primeiro</button>
+      <button id="prevBtn" onclick="changePage(-1)">⟨ Voltar</button>
+    </div>
+
+    <div class="page-numbers" id="pageNumbers"></div>
+
+    <div class="page-controls">
+      <button id="nextBtn" onclick="changePage(1)">Avançar ⟩</button>
+      <button id="lastPageBtn" onclick="goToLastPage()">Último ⟫</button>
+    </div>
+
+    <div style="display:flex; gap:8px; align-items:center;">
+      <div>
+        Mostrar
+        <select id="rowsPerPage" onchange="changeRowsPerPage()">
+          <option value="10">10</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+        por página
+      </div>
+      <div id="showingInfo" style="white-space:nowrap; font-size:13px; color:#333;"></div>
+    </div>
+  </div>
 </section>
+
+<div id="feedback">Operação realizada com sucesso!</div>
 
 <script>
 const webAppURL = "https://script.google.com/macros/s/AKfycbyPdj_FtFywyV4Ey4b3-Q6YV3RcgXzsEUux6ceK23cdJTh71paHQ9HMD5Ts-pFOomUX/exec";
-let allData = [];
-let currentPage = 1;
-const rowsPerPage = 10;
+let allData = [], workingData = [];
+let currentPage = 1, rowsPerPage = 10;
+const refs = {
+  nfTableBody: document.querySelector('#nfTable tbody'),
+  pageNumbers: document.getElementById('pageNumbers'),
+  prevBtn: document.getElementById('prevBtn'),
+  nextBtn: document.getElementById('nextBtn'),
+  firstPageBtn: document.getElementById('firstPageBtn'),
+  lastPageBtn: document.getElementById('lastPageBtn'),
+  showingInfo: document.getElementById('showingInfo'),
+  searchInput: document.getElementById('searchInput'),
+  feedback: document.getElementById('feedback'),
+  rowsPerPage: document.getElementById('rowsPerPage')
+};
 
-document.addEventListener("DOMContentLoaded", carregarNFs);
-document.getElementById("searchInput").addEventListener("input", () => { currentPage = 1; aplicarFiltro(); });
-
-async function carregarNFs() {
-  try {
-    const response = await fetch(webAppURL + "?action=get");
-    const data = await response.json();
-    // Filtra apenas as notas da UNA
-    allData = data.filter(r => r.fabrica && r.fabrica.toLowerCase() === "una");
-    aplicarFiltro();
-  } catch (err) {
-    console.error("Erro ao carregar dados:", err);
+async function carregarNFs(){
+  try{
+    const res = await fetch(webAppURL + '?action=get');
+    const data = await res.json();
+    allData = Array.isArray(data) ? data.filter(r => r.fabrica === 'UNA') : [];
+    allData.sort((a,b)=> new Date(b.dataHora||0) - new Date(a.dataHora||0));
+    aplicarFiltroPesquisa();
+  }catch(err){
+    console.error(err);
+    allData = [];
+    aplicarFiltroPesquisa();
   }
 }
 
-function aplicarFiltro() {
-  const search = document.getElementById("searchInput").value.toLowerCase();
-  const filtrados = allData.filter(r =>
-    (!search ||
-      r.razao.toLowerCase().includes(search) ||
-      r.nfVenda.toLowerCase().includes(search))
-  );
-  renderTabela(filtrados);
+function aplicarFiltroPesquisa(){
+  const termo = refs.searchInput.value.toLowerCase().trim();
+  workingData = termo 
+    ? allData.filter(r => (r.razao + r.nfVenda + r.nfRemessa + r.observacao).toLowerCase().includes(termo))
+    : allData;
+  currentPage = 1;
+  renderTabela();
 }
 
-function renderTabela(data) {
-  const tbody = document.querySelector("#nfTable tbody");
-  tbody.innerHTML = "";
-  if (data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="8">Nenhuma NF encontrada.</td></tr>';
-    document.getElementById("pagination").innerHTML = "";
-    return;
+function renderTabela(){
+  const tbody = refs.nfTableBody;
+  tbody.innerHTML = '';
+  rowsPerPage = parseInt(refs.rowsPerPage.value,10) || 10;
+  const totalItems = workingData.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems/rowsPerPage));
+  if(currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage-1)*rowsPerPage;
+  const end = Math.min(totalItems, start+rowsPerPage);
+  const pageData = workingData.slice(start, end);
+
+  if(pageData.length === 0){
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Nenhuma NF encontrada.</td></tr>';
+  } else {
+    for(const r of pageData){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${r.dataHora ? new Date(r.dataHora).toLocaleString() : '-'}</td>
+        <td>${r.razao || ''}</td>
+        <td>${r.nfVenda || ''}</td>
+        <td>${r.nfRemessa || ''}</td>
+        <td>${r.nfCobertura || ''}</td>
+        <td>${r.fabrica || ''}</td>
+        <td>${r.pdfLink ? `<a href="${r.pdfLink}" target="_blank">Abrir PDF</a>` : '—'}</td>
+        <td>${r.observacao || ''}</td>`;
+      tbody.appendChild(tr);
+    }
   }
 
-  const totalPages = Math.ceil(data.length / rowsPerPage);
-  if (currentPage > totalPages) currentPage = 1;
-  const start = (currentPage - 1) * rowsPerPage;
-  const end = start + rowsPerPage;
-  const pageData = data.slice(start, end);
-
-  pageData.forEach(r => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${new Date(r.dataHora).toLocaleString()}</td>
-      <td>${r.razao}</td>
-      <td>${r.nfVenda}</td>
-      <td>${r.nfRemessa}</td>
-      <td>${r.nfCobertura}</td>
-      <td>${r.fabrica}</td>
-      <td>${r.pdfLink ? `<a href="${r.pdfLink}" target="_blank">Abrir PDF</a>` : "—"}</td>
-      <td>${r.observacao || ""}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-
-  const pagination = document.getElementById("pagination");
-  pagination.innerHTML = "";
-  for (let i = 1; i <= totalPages; i++) {
-    const btn = document.createElement("button");
-    btn.innerText = i;
-    if (i === currentPage) btn.classList.add("active");
-    btn.addEventListener("click", () => { currentPage = i; renderTabela(data); });
-    pagination.appendChild(btn);
-  }
+  updatePaginationUI(totalItems, totalPages, start+1, end);
 }
+
+function updatePaginationUI(totalItems, totalPages, startIndex, endIndex){
+  refs.pageNumbers.innerHTML = '';
+  const maxButtons = 7;
+  let startPage = Math.max(1, currentPage - Math.floor(maxButtons/2));
+  let endPage = Math.min(totalPages, startPage + maxButtons - 1);
+  if(endPage - startPage < maxButtons - 1) startPage = Math.max(1, endPage - maxButtons + 1);
+  for(let p=startPage;p<=endPage;p++){
+    const b = document.createElement('button');
+    b.textContent = p;
+    if(p===currentPage) b.classList.add('active');
+    b.onclick = ()=>goToPage(p);
+    refs.pageNumbers.appendChild(b);
+  }
+  refs.prevBtn.disabled = currentPage <= 1;
+  refs.nextBtn.disabled = currentPage >= totalPages;
+  refs.firstPageBtn.disabled = currentPage <= 1;
+  refs.lastPageBtn.disabled = currentPage >= totalPages;
+  refs.showingInfo.innerText = totalItems === 0 ? 'Mostrando 0 de 0' : `Mostrando ${startIndex}–${endIndex} de ${totalItems}`;
+}
+
+function changePage(dir){ const totalPages = Math.ceil(workingData.length/rowsPerPage); currentPage = Math.min(totalPages, Math.max(1, currentPage + dir)); renderTabela(); }
+function goToPage(n){ const totalPages = Math.ceil(workingData.length/rowsPerPage); currentPage = Math.min(totalPages, Math.max(1, n)); renderTabela(); }
+function goToLastPage(){ const totalPages = Math.ceil(workingData.length/rowsPerPage); currentPage = totalPages; renderTabela(); }
+function changeRowsPerPage(){ rowsPerPage = parseInt(refs.rowsPerPage.value,10); currentPage = 1; renderTabela(); }
+
+function mostrarFeedback(msg){
+  refs.feedback.innerText = msg;
+  refs.feedback.style.display = 'block';
+  setTimeout(()=>refs.feedback.style.display='none',2000);
+}
+
+carregarNFs();
 </script>
-
 </body>
 </html>
