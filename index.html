@@ -88,7 +88,7 @@ tr:hover{background:#f0e0fb}
 /* Observação */
 .obs-bubble{
   display:none;
-  position:fixed; /* evita aumentar a tela */
+  position:fixed;
   background:#fff;
   border:1px solid #ddd;
   padding:10px;
@@ -205,7 +205,7 @@ tr:hover{background:#f0e0fb}
 <div id="feedback">Operação realizada com sucesso!</div>
 
 <script>
-/* Fundo animado com partículas (mesmo do outro código) */
+/* Fundo animado */
 const canvas=document.getElementById('bgCanvas');
 const ctx=canvas.getContext('2d');
 canvas.width=window.innerWidth;
@@ -252,7 +252,7 @@ window.addEventListener('resize',()=>{
   canvas.height=window.innerHeight;
 });
 
-/* === Funções originais === */
+/* === Funções principais === */
 const webAppURL="https://script.google.com/macros/s/AKfycbyPdj_FtFywyV4Ey4b3-Q6YV3RcgXzsEUux6ceK23cdJTh71paHQ9HMD5Ts-pFOomUX/exec";
 let allData=[],workingData=[];
 let currentPage=1,rowsPerPage=10,obsId=null;
@@ -364,16 +364,36 @@ function goToPage(n){const tp=Math.max(1,Math.ceil(workingData.length/rowsPerPag
 function goToLastPage(){const tp=Math.max(1,Math.ceil(workingData.length/rowsPerPage));currentPage=tp;renderTabela();}
 function changeRowsPerPage(){rowsPerPage=parseInt(document.getElementById('rowsPerPage').value,10);currentPage=1;renderTabela();}
 
+/* === BALÃO AJUSTADO === */
 function abrirObs(id,btn){
   obsId=id;
   const nf=allData.find(x=>x.id===id)||{};
   refs.obsText.value=nf.observacao||'';
   const bubble=refs.obsBubble;
   bubble.style.display='block';
+
   const rect=btn.getBoundingClientRect();
-  bubble.style.left=(rect.left+window.scrollX)+'px';
-  bubble.style.top=(rect.bottom+window.scrollY+8)+'px';
+  let left=rect.left+window.scrollX;
+  let top=rect.bottom+window.scrollY+8;
+
+  const bubbleW=bubble.offsetWidth;
+  const bubbleH=bubble.offsetHeight;
+  const screenW=window.innerWidth;
+  const screenH=window.innerHeight;
+
+  // Impede sair para direita
+  if(left+bubbleW>screenW-10) left=screenW-bubbleW-10;
+  // Impede sair para baixo
+  if(top+bubbleH>screenH-10) top=rect.top+window.scrollY-bubbleH-10;
+  // Impede sair para esquerda
+  if(left<10) left=10;
+  // Impede sair para cima
+  if(top<10) top=10;
+
+  bubble.style.left=left+'px';
+  bubble.style.top=top+'px';
 }
+
 function fecharObs(){refs.obsBubble.style.display='none';}
 async function salvarObs(){
   if(!obsId)return fecharObs();
